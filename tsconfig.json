@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es5",                                
+    "module": "commonjs",                             
+    "outDir": "./dist",
+    "rootDir": ".",
+    "esModuleInterop": true,                            
+    "strict": true,
+    "moduleResolution": "node",
+    "sourceMap": false,
+  },
+  "exclude": [ "node_modules" ], 
+  "include": [ "./src/**/*.ts", "environment.d.ts" ]
+}
