@@ -24,7 +24,7 @@ export const getSingleHistory = async (req: Request, res: Response) => {
   const { ticker, period } = req.params;
 
   const queryOptions = { period1: getDay(-parseInt(period)), period2: getDay(0) };
-  const result = await yahooFinance.historical(`${ticker}`, queryOptions);
+  const data = await yahooFinance.historical(`${ticker}`, queryOptions);
 
-  return res.send({ data: { result, cnt: result.length } });
+  return res.send({ data, cnt: data.length });
 };
