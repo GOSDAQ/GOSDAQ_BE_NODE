@@ -4,7 +4,7 @@ import { getExchangeRate, getPriceByTicker, getSingleHistory } from "../controll
 const stockRouter = express.Router();
 
 stockRouter.get("/interest/:ticker", getPriceByTicker);
-stockRouter.get("/exchange", getExchangeRate);
+stockRouter.route("/exchange").get(getExchangeRate).post(getExchangeRate);
 stockRouter.get("/history/:ticker/:period", getSingleHistory);
 
 export default stockRouter;

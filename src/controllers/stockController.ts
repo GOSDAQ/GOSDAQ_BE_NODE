@@ -17,7 +17,7 @@ export const getPriceByTicker = async (req: Request, res: Response) => {
 export const getExchangeRate = async (req: Request, res: Response) => {
   const data = await getExchangeData("KRW");
 
-  return res.send({ data: data[0][0] });
+  return res.send({ exchange: data[0][0] });
 };
 
 export const getSingleHistory = async (req: Request, res: Response) => {
