@@ -6,25 +6,37 @@ import { getDay } from "../util/date";
 
 export const getPriceByTicker = async (req: Request, res: Response) => {
   const { ticker } = req.params;
-  const { regularMarketPrice, regularMarketChangePercent } = await yahooFinance.quote(`${ticker}`);
 
-  return res.send({
-    price: regularMarketPrice,
-    rate: regularMarketChangePercent?.toFixed(2)
-  });
+  try {
+    const { regularMarketPrice, regularMarketChangePercent } = await yahooFinance.quote(`${ticker}`);
+
+    return res.send({
+      price: regularMarketPrice,
+      rate: regularMarketChangePercent?.toFixed(2)
+    });
+  } catch (error) {
+    return res.send(null)
+  }
 }
 
 export const getExchangeRate = async (req: Request, res: Response) => {
-  const data = await getExchangeData("KRW");
-
-  return res.send({ exchange: data[0][0] });
+  try {
+    const data = await getExchangeData("KRW");
+    return res.send({ data: data[0][0] });
+  } catch (error) {
+    return res.send(null)
+  }
 };
 
 export const getSingleHistory = async (req: Request, res: Response) => {
   const { ticker, period } = req.params;
-
   const queryOptions = { period1: getDay(-parseInt(period)), period2: getDay(0) };
-  const data = await yahooFinance.historical(`${ticker}`, queryOptions);
 
-  return res.send({ data, cnt: data.length });
+  try {
+    const data = await yahooFinance.historical(`${ticker}`, queryOptions);
+
+    return res.send({ data, cnt: data.length });
+  } catch (error) {
+    return res.send(null)
+  }
 };
