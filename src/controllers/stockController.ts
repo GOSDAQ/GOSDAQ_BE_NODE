@@ -40,3 +40,14 @@ export const getSingleHistory = async (req: Request, res: Response) => {
     return res.send(null)
   }
 };
+
+export const getSearchTickerResult = async (req: Request, res: Response) => {
+  const { ticker } = req.params;
+
+  try {
+    const result = await yahooFinance.quote(ticker);
+    return res.send({ name: result.shortName })
+  } catch (error) {
+    return res.send(null)
+  }
+};
