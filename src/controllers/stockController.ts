@@ -50,11 +50,21 @@ export const getSingleHistory = async (req: Request, res: Response) => {
 export const getSearchTicker = async (req: Request, res: Response) => {
   const { ticker } = req.params;
 
-  const result = await getSearchTickerResult(ticker);
-  const resData =
-    result.errMsg.length === 0
-      ? getCommonResponse(200, "Search Ticker Success")
-      : getCommonResponse(500, "Search Ticker Failed... See errMsg");
+  try {
+    const result = await getSearchTickerResult(ticker);
 
-  return res.send({ ...resData, ...result });
+    const resData =
+      result.errMsg.length === 0
+        ? getCommonResponse(200, "Search Ticker Success")
+        : getCommonResponse(500, "Search Ticker Failed... See errMsg");
+
+    return res.send({ ...resData, ...result });
+  } catch (error) {
+    console.log(error);
+    const resData = getCommonResponse(
+      500,
+      "Search Ticker Failed... Controller - getSearchTicker Error"
+    );
+    return res.send(resData);
+  }
 };
