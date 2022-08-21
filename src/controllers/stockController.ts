@@ -51,14 +51,12 @@ export const getSearchTicker = async (req: Request, res: Response) => {
   const { ticker } = req.params;
 
   try {
-    const result = await getSearchTickerResult(ticker);
+    const data = await getSearchTickerResult(ticker);
 
     const resData =
-      result.errMsg.length === 0
-        ? getCommonResponse(200, "Search Ticker Success")
-        : getCommonResponse(500, "Search Ticker Failed... See errMsg");
+      data.isError ? getCommonResponse(500, "Search Ticker Failed... See Node Log") : getCommonResponse(200, "Search Ticker Success")
 
-    return res.send({ ...resData, ...result });
+    return res.send({ ...resData, data });
   } catch (error) {
     console.log(error);
     const resData = getCommonResponse(

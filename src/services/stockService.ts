@@ -7,15 +7,16 @@ import { getDay } from "../util/date";
 import { getCommonResponse } from "../util/responseHandler";
 
 export const getSearchTickerResult = async (ticker: string) => {
-  const data: ISearchResult[] = [];
-  let errMsg = "";
+  let data: ISearchResult = { name: "", ticker: "", isError: false };
 
   try {
     const { shortName } = await yahooFinance.quote(ticker);
-    data.push({ name: shortName as string });
+    data.name = (shortName as string);
+    data.ticker = ticker.toUpperCase();
   } catch (error) {
-    errMsg = `${error}`;
+    console.log(error);
+    data.isError = true
   } finally {
-    return { data, errMsg };
+    return data;
   }
 };
