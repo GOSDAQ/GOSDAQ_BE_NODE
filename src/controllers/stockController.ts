@@ -1,35 +1,31 @@
 import { Request, Response } from "express";
 import { getExchangeData } from "yahoo-exchange";
 import yahooFinance from "yahoo-finance2";
-import { getSearchTickerResult } from "../services/stockService";
+import { getPriceAndRateService, getSearchTickerService } from "../services/stockService";
 
 import { getDay } from "../util/date";
 import { getCommonResponse } from "../util/responseHandler";
 
-export const getPriceByTicker = async (req: Request, res: Response) => {
+export const getPriceAndRate = async (req: Request, res: Response) => {
   const { ticker } = req.params;
 
   try {
-    const { regularMarketPrice, regularMarketChangePercent } =
-      await yahooFinance.quote(`${ticker}`);
+    const data = await getPriceAndRateService(ticker);
 
-    return res.send({
-      price: regularMarketPrice,
-      rate: regularMarketChangePercent?.toFixed(2),
-    });
+    const resData =
+      data.isError ? getCommonResponse(500, "Get Price & Rate By Ticker Failed... See Node Log") : getCommonResponse(200, "Get Price & Rate By Ticker Success")
+
+    return res.send({ ...resData, data });
   } catch (error) {
-    return res.send(null);
+    console.log(error);
+    const resData = getCommonResponse(
+      500,
+      "Get Price & Rate By Ticker... Controller - getPriceAndRate Error"
+    );
+    return res.send(resData);
   }
 };
 
-export const getExchangeRate = async (req: Request, res: Response) => {
-  try {
-    const data = await getExchangeData("KRW");
-    return res.send({ data: data[0][0] });
-  } catch (error) {
-    return res.send(null);
-  }
-};
 
 export const getSingleHistory = async (req: Request, res: Response) => {
   const { ticker, period } = req.params;
@@ -51,7 +47,7 @@ export const getSearchTicker = async (req: Request, res: Response) => {
   const { ticker } = req.params;
 
   try {
-    const data = await getSearchTickerResult(ticker);
+    const data = await getSearchTickerService(ticker);
 
     const resData =
       data.isError ? getCommonResponse(500, "Search Ticker Failed... See Node Log") : getCommonResponse(200, "Search Ticker Success")
@@ -64,5 +60,14 @@ export const getSearchTicker = async (req: Request, res: Response) => {
       "Search Ticker Failed... Controller - getSearchTicker Error"
     );
     return res.send(resData);
+  }
+};
+
+export const getExchangeRate = async (req: Request, res: Response) => {
+  try {
+    const data = await getExchangeData("KRW");
+    return res.send({ data: data[0][0] });
+  } catch (error) {
+    return res.send(null);
   }
 };
