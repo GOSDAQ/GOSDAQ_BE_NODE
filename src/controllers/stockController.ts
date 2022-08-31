@@ -1,47 +1,50 @@
 import { Request, Response } from "express";
 import { getExchangeData } from "yahoo-exchange";
-import yahooFinance from "yahoo-finance2";
-import { getPriceAndRateService, getSearchTickerService } from "../services/stockService";
 
-import { getDay } from "../util/date";
+import { getInterestStockInfoService, getMyStockInfoService, getSearchTickerService } from "../services/stockService";
 import { getCommonResponse } from "../util/responseHandler";
 
-export const getPriceAndRate = async (req: Request, res: Response) => {
-  const { ticker } = req.params;
+export const getInterestStockInfo = async (req: Request, res: Response) => {
+  const { ticker, period } = req.query;
 
   try {
-    const data = await getPriceAndRateService(ticker);
+    const data = await getInterestStockInfoService(ticker as string, period as string);
 
     const resData =
-      data.isError ? getCommonResponse(500, "Get Price & Rate By Ticker Failed... See Node Log") : getCommonResponse(200, "Get Price & Rate By Ticker Success")
+      data.isError ? getCommonResponse(500, "Get Interest Stock Info Failed... See Node Log") :
+        getCommonResponse(200, "Get Interest Stock Info Success");
 
     return res.send({ ...resData, data });
   } catch (error) {
     console.log(error);
     const resData = getCommonResponse(
       500,
-      "Get Price & Rate By Ticker... Controller - getPriceAndRate Error"
+      "Get Interest Stock Info Failed... Controller - getInterestStockInfo Error"
     );
     return res.send(resData);
   }
 };
 
-
-export const getSingleHistory = async (req: Request, res: Response) => {
-  const { ticker, period } = req.params;
-  const queryOptions = {
-    period1: getDay(-parseInt(period)),
-    period2: getDay(0),
-  };
+export const getMyStockInfo = async (req: Request, res: Response) => {
+  const { ticker } = req.params;
 
   try {
-    const data = await yahooFinance.historical(`${ticker}`, queryOptions);
+    const data = await getMyStockInfoService(ticker as string);
 
-    return res.send({ data, cnt: data.length });
+    const resData =
+      data.isError ? getCommonResponse(500, "Get Interest Stock Info Failed... See Node Log") :
+        getCommonResponse(200, "Get Interest Stock Info Success");
+
+    return res.send({ ...resData, data });
   } catch (error) {
-    return res.send(null);
+    console.log(error);
+    const resData = getCommonResponse(
+      500,
+      "Get Interest Stock Info Failed... Controller - getInterestStockInfo Error"
+    );
+    return res.send(resData);
   }
-};
+}
 
 export const getSearchTicker = async (req: Request, res: Response) => {
   const { ticker } = req.params;
@@ -50,7 +53,8 @@ export const getSearchTicker = async (req: Request, res: Response) => {
     const data = await getSearchTickerService(ticker);
 
     const resData =
-      data.isError ? getCommonResponse(500, "Search Ticker Failed... See Node Log") : getCommonResponse(200, "Search Ticker Success")
+      data.isError ? getCommonResponse(500, "Search Ticker Failed... See Node Log") :
+        getCommonResponse(200, "Search Ticker Success");
 
     return res.send({ ...resData, data });
   } catch (error) {
